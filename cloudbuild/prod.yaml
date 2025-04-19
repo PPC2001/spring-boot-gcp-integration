@@ -22,6 +22,7 @@ steps:
            '--max-instances', '3']
 
 options:
+  logging: CLOUD_LOGGING_ONLY 
   substitutionOption: 'ALLOW_LOOSE'
 substitutions:
   _GCR_HOSTNAME: 'us-central1-docker.pkg.dev'
