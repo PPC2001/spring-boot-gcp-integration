@@ -1,12 +1,12 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build',
-           '--build-arg', 'PROFILE=prod',
-           '-t', '$_GCR_HOSTNAME/$PROJECT_ID/user-mgmt-app-prod:$COMMIT_SHA',
-           '.']
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '$_GCR_HOSTNAME/$PROJECT_ID/user-mgmt-app-prod:$COMMIT_SHA']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build',
+         '--build-arg', 'PROFILE=prod',
+         '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
+         '.']
+  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args: ['gcloud', 'run', 'deploy', 'user-mgmt-app-prod',
