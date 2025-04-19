@@ -31,7 +31,6 @@ steps:
         '--add-cloudsql-instances', '$PROJECT_ID:us-central1:userdb-dev',
         '--memory', '512Mi',
         '--port', '8080', 
-        '--health-check-path', '/actuator/health',  
         '--timeout', '300s', 
         '--update-env-vars', 'SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT=60000'  # DB connection timeout
       ]
