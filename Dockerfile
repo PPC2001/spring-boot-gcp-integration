@@ -11,6 +11,7 @@ FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-# Cloud Run automatically injects PORT environment variable
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
+# ENTRYPOINT using exec format so PORT gets injected
+ENTRYPOINT exec java -Dserver.port=$PORT -jar app.jar
+
 
