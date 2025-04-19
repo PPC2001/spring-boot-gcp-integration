@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # Development Environment Services
+  app-dev:
+    build:
+      context: .
+      args:
+        PROFILE: dev
+    image: user-crud-app:dev
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_HOST=cloudsql-proxy-dev
+      - DB_PORT=5432
+      - DB_NAME=userdb
+      - DB_USER=springuser
+      - DB_PASSWORD=${DEV_DB_PASSWORD}
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - cloudsql-proxy-dev
+    restart: unless-stopped
+    networks:
+      - dev-network
+
+  cloudsql-proxy-dev:
+    image: gcr.io/cloudsql-docker/gce-proxy:latest
+    command: /cloud_sql_proxy -instances=${GCP_PROJECT_ID}:${GCP_REGION}:userdb-dev=tcp:5432 -credential_file=/secrets/service-account.json
+    volumes:
+      - C:/Users/chava/Intellij-Workspace/config/gcp:/secrets:ro
+    restart: unless-stopped
+    networks:
+      - dev-network
+
+  # Production Environment Services
+  app-prod:
+    build:
+      context: .
+      args:
+        PROFILE: prod
+    image: user-crud-app:prod
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_HOST=cloudsql-proxy-prod
+      - DB_PORT=5432
+      - DB_NAME=userdb
+      - DB_USER=springuser
+      - DB_PASSWORD=${PROD_DB_PASSWORD}
+    depends_on:
+      - cloudsql-proxy-prod
+    restart: unless-stopped
+    networks:
+      - prod-network
+
+  cloudsql-proxy-prod:
+    image: gcr.io/cloudsql-docker/gce-proxy:latest
+    command: /cloud_sql_proxy -instances=${GCP_PROJECT_ID}:${GCP_REGION}:userdb-prod=tcp:5432 -credential_file=/secrets/service-account.json
+    volumes:
+      - ${SERVICE_ACCOUNT_JSON_PATH}:/secrets/service-account.json
+    restart: unless-stopped
+    networks:
+      - prod-network
+
+networks:
+  dev-network:
+    driver: bridge
+  prod-network:
+    driver: bridge

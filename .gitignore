@@ -1,0 +1,46 @@
+# Build artifacts
+target/
+bin/
+build/
+out/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.vscode/
+
+# Environment files
+.env
+*.env
+config/gcp/service-account.json
+application-local.properties
+
+# Log files
+*.log
+logs/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper
+!.mvn/wrapper/
+mvnw.cmd
+
+# Docker compose override files
+docker-compose.override.yml
+
+# Cloud Build local testing files
+cloudbuild-local.yaml
+
+# Secret files
+**/secrets/
+**/credentials/

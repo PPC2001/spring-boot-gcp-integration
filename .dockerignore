@@ -1,0 +1,32 @@
+# Ignore everything by default
+*
+
+# Allow these specific files/directories
+!src/
+!mvnw
+!pom.xml
+!.mvn/
+
+# Exclude development and IDE files
+.git/
+.gitignore
+*.iml
+.idea/
+*.log
+*.swp
+.DS_Store
+
+# Exclude local configuration files
+config/local/
+*.properties
+!src/main/resources/application*.properties
+
+# Exclude build artifacts (they'll be created fresh)
+target/
+!target/*.jar
+
+# Exclude Cloud SQL proxy files
+service-account.json
+*.key
+*.p12
+*.pem
