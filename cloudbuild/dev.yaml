@@ -1,12 +1,12 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build',
-         '--build-arg', 'PROFILE=dev',
-         '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-dev:$COMMIT_SHA',
-         '.']
-  
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-dev:$COMMIT_SHA']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build',
+           '--build-arg', 'PROFILE=dev',
+           '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-dev:$COMMIT_SHA',
+           '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-dev:$COMMIT_SHA']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args: ['gcloud', 'run', 'deploy', 'user-mgmt-app-dev',
@@ -20,7 +20,8 @@ steps:
            '--memory', '512Mi']
 
 options:
-  logging: CLOUD_LOGGING_ONLY 
+  logging: CLOUD_LOGGING_ONLY
   substitutionOption: 'ALLOW_LOOSE'
+
 substitutions:
   _GCR_HOSTNAME: 'us-central1-docker.pkg.dev'
