@@ -15,6 +15,7 @@ RUN ./mvnw package -DskipTests
 
 # Runtime stage (remain the same)
 FROM eclipse-temurin:17-jre-jammy
+ARG PROFILE=dev  # Default profile
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 COPY --from=builder /app/src/main/resources/application-${PROFILE}.properties ./config/application.properties
