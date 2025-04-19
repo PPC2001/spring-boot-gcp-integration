@@ -1,41 +1,44 @@
 steps:
+  # Step 1: Build the Docker image using the prod profile
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build',
-        '--build-arg', 'PROFILE=prod',
-        '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
-        '.'
+        '--build-arg', 'PROFILE=prod',  # Set the Spring profile to 'prod' during build
+        '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',  # Tag the image with commit SHA
+        '.'  # Build context is the current directory
       ]
 
+  # Step 2: Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'push',
-        'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA'
+        'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA'  # Push the image to Artifact Registry
       ]
 
+  # Step 3: Deploy the image to Cloud Run using 'prod' environment
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args:
       [
-        'gcloud', 'run', 'deploy', 'user-mgmt-app-prod',
-        '--image', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
-        '--region', 'us-central1',
-        '--platform', 'managed',
-        '--allow-unauthenticated',
-        '--service-account', 'cloud-build-deployer@$PROJECT_ID.iam.gserviceaccount.com',
+        'gcloud', 'run', 'deploy', 'user-mgmt-app-prod',  # Deploy to Cloud Run with service name 'user-mgmt-app-prod'
+        '--image', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',  # Use pushed image
+        '--region', 'us-central1',  # Deploy in us-central1 region
+        '--platform', 'managed',  # Use fully managed Cloud Run platform
+        '--allow-unauthenticated',  # Allow public access to the service
+        '--service-account', 'cloud-build-deployer@$PROJECT_ID.iam.gserviceaccount.com',  # Use deployer service account
         '--set-env-vars',
-        'SPRING_PROFILES_ACTIVE=prod,DB_NAME=userdb,DB_USER=springuser,INSTANCE_CONNECTION_NAME=$PROJECT_ID:us-central1:userdb-prod,SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT=60000',
+        'SPRING_PROFILES_ACTIVE=prod,DB_NAME=userdb,DB_USER=springuser,INSTANCE_CONNECTION_NAME=$PROJECT_ID:us-central1:userdb-prod,SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT=60000',  # Set environment variables for Spring Boot and DB
         '--set-secrets',
-        'DB_PASSWORD=db-prod-password:latest',
-        '--add-cloudsql-instances', '$PROJECT_ID:us-central1:userdb-prod',
-        '--memory', '512Mi',
-        '--port', '8080', 
-        '--timeout', '900s' 
+        'DB_PASSWORD=db-prod-password:latest',  # Inject secret for DB password
+        '--add-cloudsql-instances', '$PROJECT_ID:us-central1:userdb-prod',  # Connect to Cloud SQL instance
+        '--memory', '512Mi',  # Allocate memory for Cloud Run instance
+        '--port', '8080',  # Expose port 8080
+        '--timeout', '900s'  # Increase request timeout to 15 minutes
       ]
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY  # Log only to Cloud Logging
 
 substitutions:
-  _GCR_HOSTNAME: 'us-central1-docker.pkg.dev'
+  _GCR_HOSTNAME: 'us-central1-docker.pkg.dev'  # Optional substitution if using _GCR_HOSTNAME in image path
