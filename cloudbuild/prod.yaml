@@ -4,7 +4,7 @@ steps:
       [
         'build',
         '--build-arg', 'PROFILE=prod',
-        '-t', 'us-central1-docker.pkg.prod/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
+        '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
         '.'
       ]
 
@@ -12,14 +12,14 @@ steps:
     args:
       [
         'push',
-        'us-central1-docker.pkg.prod/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA'
+        'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA'
       ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args:
       [
         'gcloud', 'run', 'deploy', 'user-mgmt-app-prod',
-        '--image', 'us-central1-docker.pkg.prod/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
+        '--image', 'us-central1-docker.pkg.dev/$PROJECT_ID/user-mgmt-app/user-mgmt-app-prod:$COMMIT_SHA',
         '--region', 'us-central1',
         '--platform', 'managed',
         '--allow-unauthenticated',
@@ -38,4 +38,4 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
-  _GCR_HOSTNAME: 'us-central1-docker.pkg.prod'
+  _GCR_HOSTNAME: 'us-central1-docker.pkg.dev'
