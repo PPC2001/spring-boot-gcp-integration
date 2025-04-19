@@ -4,6 +4,7 @@
 # Allow these specific files/directories
 !src/
 !mvnw
+!mvnw.cmd   # If you are using mvnw.cmd on Windows
 !pom.xml
 !.mvn/
 
